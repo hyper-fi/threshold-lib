@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/okx/threshold-lib/crypto/curves"
-	"github.com/okx/threshold-lib/crypto/paillier"
 	"github.com/stretchr/testify/require"
 
 	"testing"
@@ -22,9 +21,9 @@ func TestEcdsaSign(t *testing.T) {
 	p1Data, p2Data, _ := KeyGen()
 
 	fmt.Println("=========2/2 keygen==========")
-	paiPrivate, _, _ := paillier.NewKeyPair(8)
-	fmt.Println("paiPrivate:", paiPrivate)
-	fmt.Println("===================")
+	//paiPrivate, _, _ := paillier.NewKeyPair(8)
+	paiPrivate, _ := keygen.UnMarshalToPaillierKey([]byte(keygen.DefaultPaillierKey))
+
 	p1PreParamsAndProof := keygen.GeneratePreParamsWithDlnProof() // this step should be locally done by P1
 
 	// this step should be locally done by P2. To save time, we assume both setup are the same.
