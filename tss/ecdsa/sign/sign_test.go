@@ -23,7 +23,8 @@ func TestEcdsaSign(t *testing.T) {
 
 	fmt.Println("=========2/2 keygen==========")
 	paiPrivate, _, _ := paillier.NewKeyPair(8)
-
+	fmt.Println("paiPrivate:", paiPrivate)
+	fmt.Println("===================")
 	p1PreParamsAndProof := keygen.GeneratePreParamsWithDlnProof() // this step should be locally done by P1
 
 	// this step should be locally done by P2. To save time, we assume both setup are the same.
@@ -64,6 +65,18 @@ func TestEcdsaSign(t *testing.T) {
 	r, s, err := p1.Step3(E_k2_h_xr, affine_proof)
 	require.NoError(t, err)
 	fmt.Println(r, s)
+}
+
+func TestKeyGen(t *testing.T) {
+	p1Data, _, _ := KeyGen()
+	bs, err := p1Data.MarshalJSON("ecdsa")
+	require.NoError(t, err)
+	fmt.Println("p1Data:", p1Data)
+	fmt.Println(string(bs))
+	p1DataDump := &tss.KeyStep3Data{}
+	err = p1DataDump.UnmarshalJSON(bs, "ecdsa")
+	require.NoError(t, err)
+	fmt.Println("p1DataDump:", p1DataDump)
 }
 
 func KeyGen() (*tss.KeyStep3Data, *tss.KeyStep3Data, *tss.KeyStep3Data) {
