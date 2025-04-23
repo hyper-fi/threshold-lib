@@ -15,7 +15,7 @@ import (
 	"github.com/okx/threshold-lib/tss/key/bip32"
 )
 
-func TestEcdsaSign(t *testing.T) {
+func TestEcdsaSign2(t *testing.T) {
 	p1Data, p2Data, _ := keygen.KeyGen()
 
 	fmt.Println("=========2/2 keygen==========")
