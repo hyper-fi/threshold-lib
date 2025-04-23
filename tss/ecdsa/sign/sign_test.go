@@ -24,7 +24,8 @@ func TestEcdsaSign(t *testing.T) {
 	//paiPrivate, _, _ := paillier.NewKeyPair(8)
 	paiPrivate, _ := keygen.UnMarshalToPaillierKey([]byte(keygen.DefaultPaillierKey))
 
-	p1PreParamsAndProof := keygen.GeneratePreParamsWithDlnProof() // this step should be locally done by P1
+	//p1PreParamsAndProof := keygen.GeneratePreParamsWithDlnProof() // this step should be locally done by P1
+	p1PreParamsAndProof, _ := keygen.UnMarshalPreParamsWithDlnProof([]byte(keygen.DefaultPreParamsAndProof))
 
 	// this step should be locally done by P2. To save time, we assume both setup are the same.
 	p2PreParamsAndProof := &keygen.PreParamsWithDlnProof{
