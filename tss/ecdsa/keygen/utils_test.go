@@ -2,6 +2,7 @@ package keygen
 
 import (
 	"fmt"
+	"github.com/okx/threshold-lib/tss"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -42,4 +43,24 @@ func TestMarshalPreParamsWithDlnProof(t *testing.T) {
 	proof2, err := UnMarshalPreParamsWithDlnProof(bs)
 	require.NoError(t, err)
 	fmt.Println(proof2)
+}
+
+func TestKeyGen(t *testing.T) {
+	p1Data, _, _ := KeyGen()
+	bs, err := p1Data.MarshalJSON("ecdsa")
+	require.NoError(t, err)
+	fmt.Println("p1Data:", p1Data)
+	fmt.Println(string(bs))
+	p1DataDump := &tss.KeyStep3Data{}
+	err = p1DataDump.UnmarshalJSON(bs, "ecdsa")
+	require.NoError(t, err)
+	fmt.Println("p1DataDump:", p1DataDump)
+}
+
+func TestNewEcdsaKeyGen(t *testing.T) {
+	saveJsons := NewEcdsaKeyGen()
+	for _, j := range saveJsons {
+		fmt.Println("=========================")
+		fmt.Println(j)
+	}
 }

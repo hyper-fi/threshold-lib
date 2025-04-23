@@ -11,14 +11,12 @@ import (
 
 	"testing"
 
-	"github.com/okx/threshold-lib/tss"
 	"github.com/okx/threshold-lib/tss/ecdsa/keygen"
 	"github.com/okx/threshold-lib/tss/key/bip32"
-	"github.com/okx/threshold-lib/tss/key/dkg"
 )
 
 func TestEcdsaSign(t *testing.T) {
-	p1Data, p2Data, _ := KeyGen()
+	p1Data, p2Data, _ := keygen.KeyGen()
 
 	fmt.Println("=========2/2 keygen==========")
 	//paiPrivate, _, _ := paillier.NewKeyPair(8)
@@ -65,44 +63,4 @@ func TestEcdsaSign(t *testing.T) {
 	r, s, err := p1.Step3(E_k2_h_xr, affine_proof)
 	require.NoError(t, err)
 	fmt.Println(r, s)
-}
-
-func TestKeyGen(t *testing.T) {
-	p1Data, _, _ := KeyGen()
-	bs, err := p1Data.MarshalJSON("ecdsa")
-	require.NoError(t, err)
-	fmt.Println("p1Data:", p1Data)
-	fmt.Println(string(bs))
-	p1DataDump := &tss.KeyStep3Data{}
-	err = p1DataDump.UnmarshalJSON(bs, "ecdsa")
-	require.NoError(t, err)
-	fmt.Println("p1DataDump:", p1DataDump)
-}
-
-func KeyGen() (*tss.KeyStep3Data, *tss.KeyStep3Data, *tss.KeyStep3Data) {
-	setUp1 := dkg.NewSetUp(1, 3, curve)
-	setUp2 := dkg.NewSetUp(2, 3, curve)
-	setUp3 := dkg.NewSetUp(3, 3, curve)
-
-	msgs1_1, _ := setUp1.DKGStep1()
-	msgs2_1, _ := setUp2.DKGStep1()
-	msgs3_1, _ := setUp3.DKGStep1()
-
-	msgs1_2_in := []*tss.Message{msgs2_1[1], msgs3_1[1]}
-	msgs2_2_in := []*tss.Message{msgs1_1[2], msgs3_1[2]}
-	msgs3_2_in := []*tss.Message{msgs1_1[3], msgs2_1[3]}
-
-	msgs1_2, _ := setUp1.DKGStep2(msgs1_2_in)
-	msgs2_2, _ := setUp2.DKGStep2(msgs2_2_in)
-	msgs3_2, _ := setUp3.DKGStep2(msgs3_2_in)
-
-	msgs1_3_in := []*tss.Message{msgs2_2[1], msgs3_2[1]}
-	msgs2_3_in := []*tss.Message{msgs1_2[2], msgs3_2[2]}
-	msgs3_3_in := []*tss.Message{msgs1_2[3], msgs2_2[3]}
-
-	p1SaveData, _ := setUp1.DKGStep3(msgs1_3_in)
-	p2SaveData, _ := setUp2.DKGStep3(msgs2_3_in)
-	p3SaveData, _ := setUp3.DKGStep3(msgs3_3_in)
-
-	return p1SaveData, p2SaveData, p3SaveData
 }
