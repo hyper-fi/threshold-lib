@@ -16,8 +16,6 @@ import (
 	"unsafe"
 )
 
-type ErrString string
-
 //export FreeCString
 func FreeCString(ptr *C.char) {
 	C.free(unsafe.Pointer(ptr))
@@ -52,7 +50,7 @@ func EcdsaRefresh(share1st string, share2nd string) ([]string, error) {
 func EcdsaRefreshSimple(share1st string, share2nd string) (*C.char, *C.char, *C.char, *C.char) {
 	shares, err := reshare.RefreshEcdsaKeyShares(share1st, share2nd)
 	if err != nil {
-		errStr := ErrString(err.Error())
+		errStr := err.Error()
 
 		var p runtime.Pinner
 		p.Pin(unsafe.Pointer(&errStr))
@@ -83,7 +81,7 @@ func EcdsaDerivedPubKey(share1st string, share2nd string, childIdx uint32) (stri
 func EcdsaDerivedPubKeySimple(share1st string, share2nd string, childIdx uint32) (*C.char, *C.char) {
 	pub, err := sign.GetEcdsaDerivedPubKey(share1st, share2nd, childIdx)
 	if err != nil {
-		errStr := ErrString(err.Error())
+		errStr := err.Error()
 
 		var p runtime.Pinner
 		p.Pin(unsafe.Pointer(&errStr))
@@ -107,7 +105,7 @@ func EcdsaSign(share1st string, share2nd string, childIdx uint32, signMessageHas
 func EcdsaSignSimple(share1st string, share2nd string, childIdx uint32, signMessageHashHex string) (*C.char, *C.char, *C.char) {
 	signMessageHash, err := hex.DecodeString(signMessageHashHex)
 	if err != nil {
-		errStr := ErrString(err.Error())
+		errStr := err.Error()
 
 		var p runtime.Pinner
 		p.Pin(unsafe.Pointer(&errStr))
@@ -117,7 +115,7 @@ func EcdsaSignSimple(share1st string, share2nd string, childIdx uint32, signMess
 	}
 	r, s, err := sign.EcdsaSign(share1st, share2nd, childIdx, signMessageHash)
 	if err != nil {
-		errStr := ErrString(err.Error())
+		errStr := err.Error()
 
 		var p runtime.Pinner
 		p.Pin(unsafe.Pointer(&errStr))
