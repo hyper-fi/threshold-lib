@@ -1,9 +1,13 @@
 package sign
 
 import (
+	"crypto/ecdsa"
 	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
+	"github.com/decred/dcrd/dcrec/secp256k1/v2"
 	"github.com/stretchr/testify/require"
+	"math/big"
 	"testing"
 )
 
@@ -31,4 +35,32 @@ func TestEcdsaSign(t *testing.T) {
 
 	fmt.Println("r:", r)
 	fmt.Println("s:", s)
+}
+
+func TestEquivalenceVerification(t *testing.T) {
+	pubKeyHex := "9ae546acb8d4d956c3a37222fe64118edd8a4691d23c6d2310d7a383a1a8e31eafafe08ac688af5cd1291d1973f1dbebc2898003e42948073d777cb3368e4c06"
+	rHex := "2a33ee77270ba2aea3cb0331406a9f6dfaff45c4b759509eb85677d308e5fcf4"
+	sHex := "5a4c79407f91b792915992124f41c079dbae6e74463be5fc23d4af0ad91f680b"
+
+	pubKeyBytes, _ := hex.DecodeString(pubKeyHex)
+	xBytes, yBytes := pubKeyBytes[0:32], pubKeyBytes[32:64]
+	rBytes, _ := hex.DecodeString(rHex)
+	sBytes, _ := hex.DecodeString(sHex)
+
+	x := new(big.Int).SetBytes(xBytes)
+	y := new(big.Int).SetBytes(yBytes)
+	r := new(big.Int).SetBytes(rBytes)
+	s := new(big.Int).SetBytes(sBytes)
+
+	hash := sha256.New()
+	hash.Write([]byte("hello"))
+	message := hash.Sum(nil)
+
+	pubKey := &ecdsa.PublicKey{
+		Curve: secp256k1.S256(),
+		X:     x,
+		Y:     y,
+	}
+	valid := ecdsa.Verify(pubKey, message, r, s)
+	fmt.Println(valid)
 }
